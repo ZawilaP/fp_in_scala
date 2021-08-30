@@ -39,7 +39,7 @@ object Option extends App {
     }
 
     def variance(xs: Seq[Double]): Option[Double] = {
-      mean(xs).flatMap(m => mean(xs.map(x => math.pow(x - m, 2))))
+      mean(xs).flatMap(m => mean(xs.map(x => math.pow(x-m, 2))))
     }
 
     def lift[A, B](f: A => B): Option[A] => Option[B] = a => a.map(f)
@@ -51,8 +51,12 @@ object Option extends App {
       }
     }
 
+    def _map2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = {
+      a.flatMap(aa => b.map(bb => f(aa, bb)))
+    }
+
     def correctMap2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] =
-      a.flatMap(aa => b map (bb => f(aa, bb)))
+      a.flatMap(aa => b.map(bb => f(aa, bb)))
 
     def forComprehensionMap2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = {
       for {
@@ -64,7 +68,7 @@ object Option extends App {
     def sequence[A](a: List[Option[A]]): Option[List[A]] = {
       a match {
         case Nil => None
-        case h :: t => h.flatMap(hh => sequence(t) map (hh :: _))
+        case h :: t => h.flatMap(hh => sequence(t).map(hh :: _))
       }
     }
 

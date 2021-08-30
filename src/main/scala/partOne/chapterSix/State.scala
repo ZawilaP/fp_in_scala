@@ -36,7 +36,7 @@ object State extends App {
   case object Turn extends Input
 
   case class Machine(locked: Boolean, candies: Int, coins: Int) {
-    private def update(i: Input): Machine =
+    private def insert(i: Input): Machine =
       (i, locked, candies, coins) match {
         case (_, a, b, c) if b < 1 => Machine(a, b, c)
         case (Coin, true, a, b) if a > 0 => Machine(false, a, b + 1)
@@ -50,12 +50,12 @@ object State extends App {
       def helper(inputs: List[Input], acc: Machine): Machine = {
         inputs.length match {
           case 0 => acc
-          case _ => helper(inputs.tail, acc.update(inputs.head))
+          case _ => helper(inputs.tail, acc.insert(inputs.head))
         }
       }
 
       val m = helper(inputs, this)
-      unit((m.coins, m.candies))
+      unit[Machine, (Int, Int)]((m.coins, m.candies))
     }
   }
 
